@@ -5,8 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>PRODUÇÃO | FATURAMENTO</title>
     
-    <!-- Bibliotecas Externas -->
-    <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
@@ -14,37 +12,7 @@
     <!-- Fontes -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
     
-    <!-- Seu Arquivo CSS -->
-    <link rel="stylesheet" href="style.css">
-    
-    <!-- Configuração Tailwind Dinâmica para Tema Claro/Escuro -->
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: { sans: ['"Plus Jakarta Sans"', 'sans-serif'], mono: ['JetBrains Mono', 'monospace'] },
-                    colors: {
-                        base: 'var(--bg-base)',
-                        panel: 'var(--bg-panel)',
-                        surface: 'var(--bg-surface)',
-                        border: 'var(--border-color)',
-                        txmain: 'var(--text-main)',
-                        txmuted: 'var(--text-muted)',
-                        brand: {
-                            main: 'var(--brand-main)',
-                            hover: 'var(--brand-hover)',
-                            light: 'var(--brand-light)'
-                        },
-                        status: { success: '#10b981', warning: '#f59e0b', danger: '#ef4444' }
-                    },
-                    boxShadow: {
-                        'glow': '0 0 15px var(--brand-glow)',
-                        'card': '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
-                    }
-                }
-            }
-        }
-    </script>
+    <!-- O Vite injetará o CSS automaticamente via import no main.js -->
 </head>
 
 <body class="bg-base text-txmain font-sans antialiased selection:bg-brand-main selection:text-white overflow-hidden fixed inset-0 transition-colors duration-300">
@@ -741,7 +709,7 @@
         </div>
     </div>
 
-    <!-- SEU SCRIPT JS -->
-    <script type="module" src="script.js"></script>
+    <!-- Entrada do Vite (App Modularizado) -->
+    <script type="module" src="/src/main.js"></script>
 </body>
 </html>

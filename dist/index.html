@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>PRODUÇÃO | FATURAMENTO</title>
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    
+    <!-- Fontes -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+    
+    <!-- O Vite injetará o CSS automaticamente via import no main.js -->
+  <script type="module" crossorigin src="/assets/index-BtOAz4rt.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-B26-Pt2k.css">
+</head>
+
+<body class="bg-base text-txmain font-sans antialiased selection:bg-brand-main selection:text-white overflow-hidden fixed inset-0 transition-colors duration-300">
+
+    <div id="dashboard-container" class="flex flex-col md:flex-row h-full w-full">
+        
+        <!-- SIDEBAR -->
+        <aside class="order-2 md:order-1 h-[80px] md:h-full w-full md:w-24 bg-panel/95 backdrop-blur-md border-t md:border-t-0 md:border-r border-border flex md:flex-col items-center justify-around md:justify-start py-2 md:py-8 z-50 shrink-0 safe-pb shadow-[0_-4px_20px_rgba(0,0,0,0.05)] transition-colors duration-300">
+            <div class="hidden md:flex w-12 h-12 rounded-xl bg-gradient-to-br from-brand-main to-red-800 items-center justify-center text-white text-2xl shadow-glow mb-8">
+                <i class="ph-bold ph-hexagon"></i>
+            </div>
+            
+            <nav class="flex w-full md:flex-col items-center justify-around md:justify-center gap-2 md:gap-5 px-2 h-full">
+                <button class="nav-item active flex-1 md:flex-none w-full md:w-16 h-full md:h-16 rounded-xl flex flex-col md:flex-row items-center justify-center transition-all text-txmuted hover:text-brand-main touch-manipulation active:scale-95" onclick="app.navigate('overview', this)">
+                    <i class="ph ph-squares-four text-3xl md:text-2xl mb-1 md:mb-0"></i>
+                    <span class="text-xs md:hidden font-medium">Visão</span>
+                </button>
+                
+                <div class="md:hidden relative -top-8">
+                    <button class="w-16 h-16 rounded-full bg-brand-main text-white shadow-lg shadow-red-600/40 flex items-center justify-center border-4 border-base active:scale-90 transition-transform" onclick="app.openModal('modal-entry')">
+                        <i class="ph-bold ph-plus text-3xl"></i>
+                    </button>
+                </div>
+
+                <button class="nav-item flex-1 md:flex-none w-full md:w-16 h-full md:h-16 rounded-xl flex flex-col md:flex-row items-center justify-center transition-all text-txmuted hover:text-brand-main touch-manipulation active:scale-95" onclick="app.navigate('occurrences', this)">
+                    <i class="ph ph-warning-octagon text-3xl md:text-2xl mb-1 md:mb-0"></i>
+                    <span class="text-xs md:hidden font-medium">Paradas/OS</span>
+                </button>
+
+                <button class="nav-item flex-1 md:flex-none w-full md:w-16 h-full md:h-16 rounded-xl flex flex-col md:flex-row items-center justify-center transition-all text-txmuted hover:text-brand-main touch-manipulation active:scale-95" onclick="app.navigate('settings', this)">
+                    <i class="ph ph-gear text-3xl md:text-2xl mb-1 md:mb-0"></i>
+                    <span class="text-xs md:hidden font-medium">Config</span>
+                </button>
+                
+                <button class="nav-item flex-1 md:flex-none w-full md:w-16 h-full md:h-16 rounded-xl flex flex-col md:flex-row items-center justify-center transition-all text-txmuted hover:text-brand-main touch-manipulation active:scale-95" onclick="app.toggleTheme()">
+                    <i class="ph ph-sun text-3xl md:text-2xl mb-1 md:mb-0" id="theme-icon"></i>
+                    <span class="text-xs md:hidden font-medium">Tema</span>
+                </button>
+            </nav>
+
+            <div class="hidden md:block mt-auto mb-4">
+                <div id="db-status-dot" class="w-3 h-3 rounded-full bg-red-500 shadow-glow" title="Desconectado"></div>
+            </div>
+        </aside>
+
+        <!-- MAIN -->
+        <main class="order-1 md:order-2 flex-1 flex flex-col h-full overflow-hidden relative bg-base transition-colors duration-300">
+            
+            <!-- HEADER -->
+            <header class="h-auto min-h-[70px] md:min-h-[80px] border-b border-border bg-base/80 backdrop-blur-xl flex flex-col md:flex-row items-center justify-between px-4 md:px-8 py-3 md:py-4 shrink-0 z-30 gap-3 transition-colors duration-300">
+                <div class="w-full md:w-auto flex justify-between items-center">
+                    <div>
+                        <h1 class="text-xl md:text-2xl font-bold tracking-tight text-txmain flex items-center gap-2">
+                            Produção <span class="text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-orange-500">Perfurac</span>
+                        </h1>
+                        <p class="text-sm text-txmuted font-medium">Dashboard Faturamento</p>
+                    </div>
+                    <button onclick="app.openAIChat()" class="md:hidden w-12 h-12 rounded-full bg-gradient-to-r from-red-600 to-orange-600 text-white shadow-glow flex items-center justify-center animate-pulse active:scale-90 transition-transform">
+                        <i class="ph-fill ph-chat-teardrop-text text-2xl"></i>
+                    </button>
+                </div>
+
+                <div class="w-full md:w-auto overflow-hidden">
+                    <div class="mobile-scroll-x pb-2 px-1">
+                        <div class="flex items-center gap-3 w-max">
+                            <div class="bg-surface p-1.5 rounded-full border border-border flex items-center gap-2">
+                                <div class="relative group pl-3">
+                                    <i class="ph ph-magnifying-glass text-txmuted text-lg"></i>
+                                    <input type="text" id="global-search" placeholder="Buscar..." class="bg-transparent border-none text-sm text-txmain pl-2 w-28 md:w-36 focus:w-48 transition-all outline-none h-10 placeholder-txmuted" oninput="app.updateDashboard()">
+                                </div>
+                                <div class="w-px h-5 bg-border"></div>
+                                <select id="filter-type" class="bg-transparent text-sm text-txmain font-medium outline-none h-10 px-3 cursor-pointer" onchange="app.updateDashboard()">
+                                    <option value="all">Todas Máq.</option>
+                                    <option value="Perfuratriz">Perfuratrizes</option>
+                                    <option value="Bate-Estaca">Bate-Estacas</option>
+                                    <option value="Bomba de Concreto">Bombas</option>
+                                </select>
+                                <div class="w-px h-5 bg-border"></div>
+                                <select id="view-granularity" class="bg-transparent text-sm text-brand-main font-bold outline-none h-10 px-3 cursor-pointer" onchange="app.toggleDateInputs()">
+                                    <option value="month">Mensal</option>
+                                    <option value="week">Semanal</option>
+                                </select>
+                            </div>
+
+                            <div class="bg-surface p-1.5 px-3 rounded-full border border-border flex items-center gap-2 h-12">
+                                <div id="container-date-range" class="flex items-center gap-2">
+                                    <input type="month" id="date-start" class="bg-transparent text-sm text-txmain font-mono outline-none w-40 hover:bg-panel rounded cursor-pointer transition-colors p-1" onchange="app.updateDashboard()">
+                                    <i class="ph ph-arrow-right text-txmuted text-sm"></i>
+                                    <input type="month" id="date-end" class="bg-transparent text-sm text-txmain font-mono outline-none w-40 hover:bg-panel rounded cursor-pointer transition-colors p-1" onchange="app.updateDashboard()">
+                                </div>
+                                <div id="container-date-single" class="hidden flex items-center gap-2">
+                                    <input type="month" id="date-single" class="bg-transparent text-sm text-txmain font-mono outline-none w-40 hover:bg-panel rounded cursor-pointer transition-colors p-1" onchange="app.updateDashboard()">
+                                    <div class="w-px h-5 bg-border"></div>
+                                    <select id="filter-week-num" class="bg-transparent text-sm text-brand-main font-bold outline-none cursor-pointer" onchange="app.updateDashboard()">
+                                        <option value="all">Todas Sem</option>
+                                        <option value="1">Sem 1</option>
+                                        <option value="2">Sem 2</option>
+                                        <option value="3">Sem 3</option>
+                                        <option value="4">Sem 4</option>
+                                        <option value="5">Sem 5</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <button onclick="app.openAIChat()" class="hidden md:flex w-12 h-12 rounded-full bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-500 hover:to-orange-500 text-white shadow-glow items-center justify-center transition-all group relative animate-pulse">
+                                <i class="ph-fill ph-chat-teardrop-text text-xl"></i>
+                            </button>
+
+                            <button onclick="app.openModal('modal-entry')" class="hidden md:flex bg-brand-main text-white hover:bg-brand-hover font-bold text-sm px-6 py-3 rounded-full shadow-lg items-center gap-2 transition-colors">
+                                <i class="ph-bold ph-plus text-lg"></i> LANÇAR
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- CONTEÚDO SCROLLABLE -->
+            <div class="flex-1 overflow-y-auto p-4 md:p-8 space-y-8 pb-32 md:pb-12">
+                
+                <!-- VIEW 1: OVERVIEW -->
+                <section id="view-overview" class="space-y-8">
+                    <!-- KPIS -->
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+                        <div class="kpi-card p-5 md:p-6 rounded-2xl relative overflow-hidden active:scale-95 transition-transform">
+                            <div class="flex flex-col md:flex-row items-start md:items-center gap-2 md:gap-3 mb-3">
+                                <div class="w-8 h-8 md:w-10 md:h-10 rounded-lg bg-panel flex items-center justify-center text-txmuted text-lg"><i class="ph ph-currency-dollar"></i></div>
+                                <span class="text-sm font-bold text-txmuted uppercase tracking-wider">Total</span>
+                            </div>
+                            <h3 id="kpi-total" class="text-xl md:text-4xl font-bold text-txmain tracking-tight">R$ 0</h3>
+                        </div>
+                        <div class="kpi-card p-5 md:p-6 rounded-2xl relative overflow-hidden active:scale-95 transition-transform">
+                            <div class="flex flex-col md:flex-row items-start md:items-center gap-2 md:gap-3 mb-3">
+                                <div class="w-8 h-8 md:w-10 md:h-10 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-500 text-lg"><i class="ph-fill ph-gear"></i></div>
+                                <span class="text-sm font-bold text-blue-500 uppercase tracking-wider">Perf.</span>
+                            </div>
+                            <h3 id="kpi-perf" class="text-xl md:text-4xl font-bold text-txmain tracking-tight">R$ 0</h3>
+                        </div>
+                        <div class="kpi-card p-5 md:p-6 rounded-2xl relative overflow-hidden active:scale-95 transition-transform">
+                            <div class="flex flex-col md:flex-row items-start md:items-center gap-2 md:gap-3 mb-3">
+                                <div class="w-8 h-8 md:w-10 md:h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-500 text-lg"><i class="ph-fill ph-hammer"></i></div>
+                                <span class="text-sm font-bold text-emerald-500 uppercase tracking-wider">Bate-Est.</span>
+                            </div>
+                            <h3 id="kpi-bate" class="text-xl md:text-4xl font-bold text-txmain tracking-tight">R$ 0</h3>
+                        </div>
+                        <div class="kpi-card p-5 md:p-6 rounded-2xl relative overflow-hidden active:scale-95 transition-transform">
+                            <div class="flex flex-col md:flex-row items-start md:items-center gap-2 md:gap-3 mb-3">
+                                <div class="w-8 h-8 md:w-10 md:h-10 rounded-lg bg-purple-500/10 flex items-center justify-center text-purple-500 text-lg"><i class="ph-fill ph-drop"></i></div>
+                                <span class="text-sm font-bold text-purple-500 uppercase tracking-wider">Bombas</span>
+                            </div>
+                            <h3 id="kpi-bomba" class="text-xl md:text-4xl font-bold text-txmain tracking-tight">R$ 0</h3>
+                        </div>
+                    </div>
+
+                    <!-- GRÁFICOS PRIMÁRIOS -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <div class="col-span-1 lg:col-span-2 bg-surface border border-border rounded-2xl p-6 shadow-card transition-colors duration-300">
+                            <div class="flex justify-between items-center mb-6">
+                                <h3 class="text-base font-bold text-txmain flex items-center gap-2"><i class="ph-duotone ph-chart-bar text-brand-main text-xl"></i> Produção por Máquina</h3>
+                                <button onclick="app.expandChart('production')" class="w-10 h-10 rounded-lg hover:bg-panel text-txmuted hover:text-brand-main transition flex items-center justify-center active:scale-90"><i class="ph ph-arrows-out-simple text-xl"></i></button>
+                            </div>
+                            <div class="h-[300px] md:h-[350px] w-full relative"><canvas id="chart-production"></canvas></div>
+                        </div>
+                        <div class="bg-surface border border-border rounded-2xl p-6 shadow-card transition-colors duration-300">
+                            <h3 class="text-base font-bold text-txmain mb-6 flex items-center gap-2"><i class="ph-duotone ph-chart-pie-slice text-purple-500 text-xl"></i> Mix de Serviços</h3>
+                            <div class="h-[300px] md:h-[350px] w-full relative"><canvas id="chart-service"></canvas></div>
+                        </div>
+                    </div>
+
+                    <!-- GRÁFICOS SECUNDÁRIOS -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="bg-surface border border-border rounded-2xl p-6 shadow-card transition-colors duration-300">
+                            <h3 class="text-base font-bold text-txmain mb-6 flex items-center gap-2"><i class="ph-duotone ph-users text-emerald-500 text-xl"></i> Ranking Clientes</h3>
+                            <div class="h-[250px] w-full relative"><canvas id="chart-clients"></canvas></div>
+                        </div>
+
+                        <div class="bg-surface border border-border rounded-2xl p-6 shadow-card relative overflow-hidden transition-colors duration-300">
+                            <div class="absolute top-0 right-0 w-32 h-32 bg-red-500/10 rounded-full blur-2xl -mr-10 -mt-10"></div>
+                            <h3 class="text-base font-bold text-txmain mb-6 flex items-center gap-2 text-red-500"><i class="ph-duotone ph-warning-circle text-xl"></i> Ociosidade Total (Dias)</h3>
+                            <div class="h-[250px] w-full relative"><canvas id="chart-idle"></canvas></div>
+                        </div>
+                    </div>
+
+                    <!-- MÓDULO INTELIGÊNCIA -->
+                    <div class="pt-8 border-t border-border">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                            <div class="bg-surface border border-border rounded-2xl p-6 shadow-card transition-colors duration-300">
+                                <h3 class="text-base font-bold text-txmain mb-6">Evolução Temporal</h3>
+                                <div class="h-[250px] md:h-[300px] relative w-full"><canvas id="chart-trend"></canvas></div>
+                            </div>
+                            <div class="bg-surface border border-border rounded-2xl p-6 shadow-card transition-colors duration-300">
+                                <h3 class="text-base font-bold text-txmain mb-6">Rentabilidade Média Mensal</h3>
+                                <div class="h-[250px] md:h-[300px] relative w-full"><canvas id="chart-profitability"></canvas></div>
+                            </div>
+                        </div>
+
+                        <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-red-900/20 to-orange-900/20 border border-red-500/20 p-8 md:p-10 cursor-pointer group transition-all active:scale-[0.98]" onclick="app.openAIDeepDive()">
+                            <div class="absolute -right-20 -top-20 w-64 h-64 bg-red-500/10 rounded-full blur-3xl"></div>
+                            <div class="relative z-10">
+                                <div class="flex items-center gap-4 mb-3">
+                                    <div class="bg-brand-main p-3 rounded-xl text-white"><i class="ph-bold ph-sparkle text-2xl"></i></div>
+                                    <h3 class="text-2xl md:text-3xl font-bold text-txmain">Ops Intelligence Pro</h3>
+                                </div>
+                                <p class="text-txmuted text-base md:text-lg mb-6">Análise detalhada e projeções financeiras da sua operação.</p>
+                                
+                                <div id="ai-text-review" class="bg-panel/50 border border-border rounded-xl p-5 md:p-8 text-base text-txmain font-medium leading-relaxed ai-content">
+                                    <span class="flex items-center gap-3"><i class="ph ph-spinner animate-spin text-xl"></i> Gerando insights...</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- VIEW 2: OCORRÊNCIAS / PARADAS / OS -->
+                <section id="view-occurrences" class="hidden space-y-6">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-2">
+                        <h2 class="text-2xl font-bold text-txmain flex items-center gap-3">
+                            <i class="ph-duotone ph-clipboard-text text-brand-main"></i> Ordens de Serviço & Paradas
+                        </h2>
+                        <button onclick="app.openModalOS()" class="bg-orange-600 hover:bg-orange-700 text-white font-bold text-sm px-6 py-3 rounded-xl shadow-lg flex items-center gap-2 transition-colors">
+                            <i class="ph-bold ph-plus text-lg"></i> NOVA O.S.
+                        </button>
+                    </div>
+
+                    <!-- Filtros de Pesquisa -->
+                    <div class="flex flex-col md:flex-row gap-4 bg-surface p-4 rounded-2xl border border-border shadow-sm">
+                        <div class="flex-1 relative">
+                            <i class="ph ph-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-txmuted text-lg"></i>
+                            <input type="text" id="occ-search-machine" placeholder="Pesquisar por Máquina..." class="w-full bg-panel border border-border rounded-xl pl-12 pr-4 py-3 text-txmain text-sm outline-none focus:border-brand-main shadow-sm transition-colors" oninput="app.renderOccurrences()">
+                        </div>
+                        <div class="flex-1 relative">
+                            <i class="ph ph-buildings absolute left-4 top-1/2 -translate-y-1/2 text-txmuted text-lg"></i>
+                            <input type="text" id="occ-search-obra" placeholder="Pesquisar por Obra/Cliente..." class="w-full bg-panel border border-border rounded-xl pl-12 pr-4 py-3 text-txmain text-sm outline-none focus:border-brand-main shadow-sm transition-colors" oninput="app.renderOccurrences()">
+                        </div>
+                    </div>
+
+                    <!-- Lista de Cartões (OS) -->
+                    <div id="occ-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-8">
+                        <!-- Renderizado via JS -->
+                    </div>
+                </section>
+
+                <!-- VIEW 3: CONFIGURAÇÕES -->
+                <section id="view-settings" class="hidden grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Config Máquinas -->
+                    <div class="bg-surface border border-border rounded-2xl p-8 flex flex-col h-[500px] md:h-[600px] transition-colors duration-300 shadow-card">
+                        <div class="flex justify-between items-start mb-4">
+                            <h3 class="text-xl font-bold text-txmain flex items-center gap-3"><i class="ph-duotone ph-gear text-brand-main"></i> Máquinas</h3>
+                            <button onclick="app.openMergeModal()" class="text-xs bg-brand-light/10 text-brand-main hover:bg-brand-main hover:text-white px-3 py-2 rounded-lg font-bold flex items-center gap-2 transition-colors" title="Fundir Máquinas Duplicadas">
+                                <i class="ph-bold ph-arrows-merge"></i> Fundir
+                            </button>
+                        </div>
+                        <p class="text-sm text-txmuted mb-5">Atribua um tipo para a máquina. Ao filtrar, apenas máquinas do tipo correto aparecerão.</p>
+                        
+                        <div class="flex gap-2 mb-6">
+                            <input type="text" id="setting-new-machine" placeholder="Nova..." class="w-1/2 bg-panel border border-border shadow-inner rounded-xl px-4 py-3 text-sm text-txmain outline-none focus:border-brand-main">
+                            <select id="setting-new-machine-type" class="w-1/2 bg-panel border border-border shadow-inner rounded-xl px-2 py-3 text-sm text-txmain outline-none focus:border-brand-main">
+                                <option value="Perfuratriz">Perfuratriz</option>
+                                <option value="Bate-Estaca">Bate-Estaca</option>
+                                <option value="Bomba de Concreto">Bomba</option>
+                            </select>
+                            <button onclick="app.addSettingItem('machineTypes')" class="w-12 h-12 rounded-xl bg-brand-main text-white flex items-center justify-center shadow-lg active:scale-90 transition-transform shrink-0"><i class="ph-bold ph-plus text-xl"></i></button>
+                        </div>
+                        <ul id="list-machines" class="flex-1 overflow-y-auto space-y-3 pr-2 scrollbar-thin"></ul>
+                    </div>
+
+                    <!-- Config Serviços -->
+                    <div class="bg-surface border border-border rounded-2xl p-8 flex flex-col h-[500px] md:h-[600px] transition-colors duration-300 shadow-card">
+                        <h3 class="text-xl font-bold text-txmain mb-4 flex items-center gap-3"><i class="ph-duotone ph-list-checks text-orange-500"></i> Serviços e Cores</h3>
+                        <p class="text-sm text-txmuted mb-5">Clique na cor para editar ou no lápis para renomear.</p>
+                        <div class="flex gap-3 mb-6">
+                            <input type="text" id="setting-new-service" placeholder="Novo..." class="flex-1 bg-panel border border-border shadow-inner rounded-xl px-5 py-4 text-base text-txmain outline-none focus:border-brand-main">
+                            <button onclick="app.addSettingItem('serviceTypes')" class="w-14 h-14 rounded-xl bg-orange-600 text-white flex items-center justify-center shadow-lg active:scale-90 transition-transform"><i class="ph-bold ph-plus text-xl"></i></button>
+                        </div>
+                        <ul id="list-services" class="flex-1 overflow-y-auto space-y-3 pr-2 scrollbar-thin"></ul>
+                    </div>
+                </section>
+                
+            </div>
+        </main>
+    </div>
+
+    <!-- MODAL LANÇAMENTO (FATURAMENTO) -->
+    <div id="modal-entry" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden z-[100] flex items-center justify-center transition-all p-0 md:p-4">
+        <div class="bg-surface border border-border w-full max-w-xl md:rounded-2xl shadow-2xl overflow-hidden flex flex-col h-full md:h-auto modal-full-mobile transition-colors duration-300">
+            <div class="flex justify-between items-center p-6 md:p-8 border-b border-border bg-panel shrink-0">
+                <h3 class="text-xl font-bold text-txmain flex items-center gap-3" id="modal-entry-title">
+                    <i class="ph-duotone ph-pencil-simple text-brand-main text-2xl"></i> Lançamento Financeiro
+                </h3>
+                <button onclick="app.closeModal('modal-entry')" class="w-12 h-12 rounded-full bg-base text-txmuted hover:text-txmain flex items-center justify-center active:bg-border transition-colors"><i class="ph-bold ph-x text-xl"></i></button>
+            </div>
+            
+            <div class="p-6 md:p-8 space-y-6 flex-1 overflow-y-auto">
+                <input type="hidden" id="in-id">
+                
+                <div class="grid grid-cols-2 gap-5">
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold text-txmuted uppercase tracking-wider">Categoria</label>
+                        <select id="in-tipo-cat" class="w-full bg-panel border border-border rounded-xl px-4 py-4 text-txmain text-base outline-none focus:border-brand-main transition-colors" onchange="app.populateMachineSelect('in-machine', this.value)">
+                            <option value="Perfuratriz">Perfuratriz</option>
+                            <option value="Bate-Estaca">Bate-Estaca</option>
+                            <option value="Bomba de Concreto">Bomba</option>
+                        </select>
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold text-txmuted uppercase tracking-wider">Data</label>
+                        <div class="relative">
+                            <input type="date" id="in-date" onchange="app.updateWeekLabel()" class="w-full bg-panel border border-border rounded-xl px-4 py-4 text-txmain text-base outline-none focus:border-brand-main transition-colors">
+                            <span id="in-week-display" class="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-bold bg-brand-light/20 text-brand-main px-2 py-1 rounded">S?</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="text-xs font-bold text-txmuted uppercase tracking-wider">Máquina (Filtro por Categoria)</label>
+                    <select id="in-machine" class="w-full bg-panel border border-border rounded-xl px-4 py-4 text-txmain text-base outline-none focus:border-brand-main transition-colors"></select>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="text-xs font-bold text-txmuted uppercase tracking-wider">Cliente / Obra</label>
+                    <input type="text" id="in-client" placeholder="Nome do Cliente" class="w-full bg-panel border border-border rounded-xl px-4 py-4 text-txmain text-base outline-none focus:border-brand-main transition-colors">
+                </div>
+
+                <div class="space-y-2">
+                    <label class="text-xs font-bold text-txmuted uppercase tracking-wider">Serviço</label>
+                    <select id="in-service" class="w-full bg-panel border border-border rounded-xl px-4 py-4 text-txmain text-base outline-none focus:border-brand-main transition-colors"></select>
+                </div>
+
+                <div class="grid grid-cols-2 gap-5">
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold text-txmuted uppercase tracking-wider">Valor (R$)</label>
+                        <input type="number" id="in-value" placeholder="0,00" class="w-full bg-panel border border-border rounded-xl px-4 py-4 text-txmain text-lg font-mono outline-none focus:border-brand-main transition-colors">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold text-txmuted uppercase tracking-wider">Status</label>
+                        <select id="in-status" class="w-full bg-panel border border-border rounded-xl px-4 py-4 text-txmain text-base outline-none focus:border-brand-main transition-colors">
+                            <option value="operando">Operando</option>
+                            <option value="manutencao">Manutenção</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Campo legado dias parados -->
+                <div class="space-y-2 bg-red-500/10 p-4 rounded-xl border border-red-500/30">
+                     <label class="text-xs font-bold text-red-500 uppercase tracking-wider flex items-center gap-2"><i class="ph-bold ph-warning text-lg"></i> Dias Parados (Diário)</label>
+                     <input type="number" id="in-dias-parados" value="0" min="0" class="w-full bg-panel border border-red-500/50 rounded-xl px-4 py-4 text-txmain text-lg outline-none focus:border-red-500 transition-colors">
+                     <p class="text-xs text-txmuted mt-1">Dica: Use a aba "Paradas/OS" para lançar ociosidade por mês com ordem de serviço completa.</p>
+                </div>
+            </div>
+
+            <div class="p-6 md:p-8 bg-panel border-t border-border flex justify-between items-center shrink-0 safe-pb">
+                <span id="save-feedback" class="text-status-success text-sm font-bold uppercase opacity-0 transition-opacity">Salvo!</span>
+                <div class="flex gap-4 w-full justify-end">
+                    <button onclick="app.closeModal('modal-entry')" class="px-6 py-4 text-sm font-bold uppercase text-txmuted hover:text-txmain transition-colors">Cancelar</button>
+                    <button onclick="app.saveEntry()" class="flex-1 md:flex-none px-8 py-4 bg-brand-main hover:bg-brand-hover text-white text-base font-bold uppercase rounded-xl shadow-lg flex items-center justify-center gap-2 active:scale-95 transition-all">
+                        <i class="ph-bold ph-floppy-disk text-xl"></i> Salvar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL ORDEM DE SERVIÇO (OS) -->
+    <div id="modal-os" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden z-[105] flex items-center justify-center p-0 md:p-4 transition-all">
+        <div class="bg-surface border border-border w-full max-w-4xl md:rounded-2xl shadow-2xl overflow-hidden flex flex-col h-full md:h-[90vh] modal-full-mobile transition-colors duration-300">
+            
+            <div class="flex justify-between items-center p-6 border-b border-border bg-panel shrink-0">
+                <div>
+                    <h3 class="text-xl font-bold text-txmain flex items-center gap-3">
+                        <i class="ph-duotone ph-clipboard-text text-orange-500 text-2xl"></i> Ordem de Serviço
+                    </h3>
+                    <p class="text-sm text-txmuted font-mono mt-1" id="os-number-display">Nº Auto</p>
+                </div>
+                <button onclick="app.closeModal('modal-os')" class="w-12 h-12 rounded-full bg-base text-txmuted hover:text-txmain flex items-center justify-center active:bg-border transition-colors"><i class="ph-bold ph-x text-xl"></i></button>
+            </div>
+            
+            <div class="p-6 md:p-8 flex-1 overflow-y-auto space-y-8 bg-base">
+                <input type="hidden" id="os-id">
+                
+                <!-- Secção Info OS -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5 bg-surface p-5 rounded-2xl border border-border shadow-sm">
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold text-txmuted uppercase tracking-wider">Referência / Data</label>
+                        <input type="month" id="os-date" class="w-full bg-panel border border-border rounded-xl px-4 py-3 text-txmain text-sm outline-none focus:border-brand-main">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold text-txmuted uppercase tracking-wider">Status da O.S.</label>
+                        <select id="os-status" class="w-full bg-panel border border-border rounded-xl px-4 py-3 text-txmain text-sm outline-none focus:border-brand-main">
+                            <option value="Em Progresso">Em Progresso</option>
+                            <option value="Concluído">Concluído</option>
+                        </select>
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold text-txmuted uppercase tracking-wider">Motivo da Parada</label>
+                        <select id="os-reason" class="w-full bg-panel border border-border rounded-xl px-4 py-3 text-txmain text-sm outline-none focus:border-brand-main">
+                            <option value="manutencao">Manutenção / Avaria</option>
+                            <option value="obra">Ociosidade / Obra</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Secção Máquina e Cliente -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold text-txmuted uppercase tracking-wider">Máquina</label>
+                        <select id="os-machine" class="w-full bg-panel border border-border rounded-xl px-4 py-3 text-txmain text-sm outline-none focus:border-brand-main"></select>
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold text-txmuted uppercase tracking-wider">Cliente / Obra</label>
+                        <input type="text" id="os-obra" placeholder="Nome da Obra ou Cliente" class="w-full bg-panel border border-border rounded-xl px-4 py-3 text-txmain text-sm outline-none focus:border-brand-main">
+                    </div>
+                </div>
+
+                <!-- Tabela de Itens / Peças -->
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center">
+                        <label class="text-sm font-bold text-txmain uppercase tracking-wider flex items-center gap-2">
+                            <i class="ph-fill ph-list-numbers text-brand-main"></i> Serviços Prestados / Peças
+                        </label>
+                        <button onclick="app.addOsItemRow()" class="text-xs bg-brand-main/10 text-brand-main hover:bg-brand-main hover:text-white px-3 py-2 rounded-lg font-bold transition-colors">
+                            + Adicionar Item
+                        </button>
+                    </div>
+                    
+                    <div class="overflow-x-auto bg-surface border border-border rounded-2xl shadow-sm">
+                        <table class="w-full text-sm text-left min-w-[600px] os-table">
+                            <thead class="bg-panel text-txmuted border-b border-border">
+                                <tr>
+                                    <th class="p-4 w-1/2">Descrição</th>
+                                    <th class="p-4 w-16 text-center">Qtd</th>
+                                    <th class="p-4 w-32 text-right">Preço Unit.</th>
+                                    <th class="p-4 w-32 text-right">Total</th>
+                                    <th class="p-4 w-12 text-center"></th>
+                                </tr>
+                            </thead>
+                            <tbody id="os-items-body" class="divide-y divide-border">
+                                <!-- Linhas criadas via JS -->
+                            </tbody>
+                        </table>
+                        <div class="p-4 bg-panel flex justify-end items-center gap-4">
+                            <span class="text-sm text-txmuted uppercase font-bold">Total Serviços/Peças:</span>
+                            <span id="os-total-val" class="text-xl font-mono font-bold text-status-success">R$ 0,00</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dias e Observações -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-5">
+                    <div class="space-y-2 md:col-span-1">
+                        <label class="text-xs font-bold text-red-500 uppercase tracking-wider">Dias Parados</label>
+                        <input type="number" id="os-days" min="1" placeholder="Ex: 5" class="w-full bg-panel border border-red-500/30 rounded-xl px-4 py-3 text-txmain text-lg font-mono outline-none focus:border-red-500">
+                    </div>
+                    <div class="space-y-2 md:col-span-3">
+                        <label class="text-xs font-bold text-txmuted uppercase tracking-wider">Observações Opcionais</label>
+                        <textarea id="os-obs" rows="2" class="w-full bg-panel border border-border rounded-xl px-4 py-3 text-txmain text-sm outline-none focus:border-brand-main" placeholder="Notas sobre a ordem de serviço..."></textarea>
+                    </div>
+                </div>
+
+            </div>
+            
+            <!-- Footer OS -->
+            <div class="p-6 border-t border-border bg-panel shrink-0 flex justify-end gap-4 safe-pb">
+                <button onclick="app.closeModal('modal-os')" class="px-6 py-3 text-sm font-bold uppercase text-txmuted hover:text-txmain transition-colors">Cancelar</button>
+                <button onclick="app.saveOS()" class="px-8 py-3 bg-orange-600 hover:bg-orange-700 text-white text-sm font-bold uppercase rounded-xl shadow-lg flex items-center justify-center gap-2 active:scale-95 transition-all">
+                    <i class="ph-bold ph-floppy-disk text-lg"></i> Salvar O.S.
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL FUNDIR MÁQUINAS (MERGE) -->
+    <div id="modal-merge" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden z-[160] flex items-center justify-center p-4 transition-all">
+        <div class="bg-surface border border-border rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden transition-colors duration-300">
+            <div class="p-6 border-b border-border bg-brand-main/10 flex items-center gap-4">
+                <div class="w-12 h-12 rounded-full bg-brand-main text-white flex items-center justify-center text-xl shadow-lg"><i class="ph-bold ph-arrows-merge"></i></div>
+                <div>
+                    <h3 class="text-xl font-bold text-txmain">Fundir Máquinas</h3>
+                    <p class="text-xs text-txmuted mt-1">Unificar histórico duplicado</p>
+                </div>
+            </div>
+            <div class="p-6 md:p-8 space-y-6">
+                <div class="bg-orange-500/10 border border-orange-500/20 p-4 rounded-xl text-sm text-txmain">
+                    Selecione a máquina que deve <strong>permanecer</strong> e a máquina que será <strong>removida</strong>. Todo o histórico (Faturação e OS) da máquina removida será transferido.
+                </div>
+                
+                <div class="space-y-2">
+                    <label class="text-xs font-bold text-status-success uppercase tracking-wider"><i class="ph-bold ph-check-circle"></i> Máquina que vai FICAR</label>
+                    <select id="merge-keeper" class="w-full bg-panel border border-border rounded-xl px-4 py-4 text-txmain text-base outline-none focus:border-status-success shadow-sm"></select>
+                </div>
+                
+                <div class="flex justify-center -my-2 z-10 relative">
+                    <div class="bg-surface border border-border rounded-full p-2 text-txmuted"><i class="ph-bold ph-arrow-down"></i></div>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="text-xs font-bold text-red-500 uppercase tracking-wider"><i class="ph-bold ph-x-circle"></i> Máquina que vai SUMIR</label>
+                    <select id="merge-loser" class="w-full bg-panel border border-border rounded-xl px-4 py-4 text-txmain text-base outline-none focus:border-red-500 shadow-sm"></select>
+                </div>
+            </div>
+            <div class="p-6 bg-panel flex justify-end gap-4 border-t border-border">
+                <button onclick="document.getElementById('modal-merge').classList.add('hidden')" class="px-5 py-3 text-sm font-bold text-txmuted hover:text-txmain transition-colors">Cancelar</button>
+                <button onclick="app.executeMerge()" class="px-6 py-3 bg-brand-main text-white text-sm font-bold rounded-xl hover:bg-brand-hover transition-colors shadow-lg">Confirmar Fusão</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- DEMAIS MODAIS ORIGINAIS (AI Chat, Drill Down, Confirmação, Prompt) -->
+    <!-- MODAL GEMINI COPILOT -->
+    <div id="modal-ai-chat" class="fixed inset-0 bg-black/80 backdrop-blur-md hidden z-[110] flex items-center justify-center p-0 md:p-6 transition-all">
+        <!-- Estrutura Chat Mantida -->
+        <div class="bg-surface border border-border w-full max-w-2xl h-full md:h-[700px] md:rounded-3xl shadow-2xl flex flex-col overflow-hidden modal-full-mobile transition-colors duration-300">
+            <div class="p-6 md:p-8 border-b border-border bg-red-900/10 flex justify-between items-center shrink-0">
+                <div class="flex items-center gap-5">
+                    <div class="w-12 h-12 rounded-full bg-brand-main flex items-center justify-center shadow-lg"><i class="ph-fill ph-sparkle text-white text-2xl"></i></div>
+                    <div>
+                        <h3 class="text-xl font-bold text-txmain">Gemini Copilot</h3>
+                        <p class="text-sm text-brand-main font-medium">Assistente Inteligente</p>
+                    </div>
+                </div>
+                <button onclick="app.closeModal('modal-ai-chat')" class="w-12 h-12 rounded-full bg-base text-txmuted hover:text-txmain flex items-center justify-center active:bg-border transition-colors"><i class="ph-bold ph-x text-xl"></i></button>
+            </div>
+            
+            <div id="chat-history" class="flex-1 overflow-y-auto p-6 space-y-5 bg-base">
+                <div class="chat-bubble chat-ai ai-content text-base">Olá! Eu sou o Gemini. Posso analisar seus dados ou fazer lançamentos rápidos.</div>
+            </div>
+
+            <div id="ai-typing" class="hidden px-8 pb-3 text-sm text-txmuted flex items-center gap-2 bg-base">
+                Gemini digitando <div class="flex gap-1 ml-1"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>
+            </div>
+
+            <div class="p-5 border-t border-border bg-surface shrink-0 safe-pb transition-colors duration-300">
+                <div class="relative flex gap-3">
+                    <input type="text" id="chat-input" class="flex-1 bg-base border border-border rounded-full pl-6 pr-5 py-4 text-txmain text-base outline-none focus:border-brand-main transition-colors" placeholder="Digite sua mensagem..." onkeypress="if(event.key === 'Enter') app.sendChatMessage()">
+                    <button onclick="app.sendChatMessage()" class="w-14 h-14 rounded-full bg-brand-main hover:bg-brand-hover text-white flex items-center justify-center shadow-lg active:scale-90 transition-all"><i class="ph-bold ph-paper-plane-right text-xl"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modais Análise Detalhada -->
+    <div id="modal-drill-list" class="fixed inset-0 bg-black/80 backdrop-blur-md hidden z-[106] flex items-center justify-center p-0 md:p-6">
+        <div class="bg-surface border border-border w-full max-w-4xl h-full md:h-[80vh] md:rounded-3xl flex flex-col overflow-hidden shadow-2xl modal-full-mobile transition-colors duration-300">
+            <div class="p-6 md:p-8 border-b border-border flex justify-between items-center bg-panel shrink-0">
+                <h3 id="drill-list-title" class="text-xl font-bold text-txmain">Detalhes</h3>
+                <button onclick="app.closeModal('modal-drill-list')" class="w-12 h-12 rounded-full bg-base text-txmuted hover:text-txmain flex items-center justify-center active:bg-border transition-colors"><i class="ph-bold ph-x text-xl"></i></button>
+            </div>
+            <div class="flex-1 overflow-y-auto p-4 md:p-8">
+                 <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left min-w-[600px]">
+                        <thead class="bg-base text-txmuted sticky top-0">
+                            <tr><th class="p-4 text-txmain">Data</th><th class="p-4 text-txmain">Máquina</th><th class="p-4 text-txmain">Cliente</th><th class="p-4 text-right text-txmain">Faturamento</th><th class="p-4 text-center text-txmain">Ações</th></tr>
+                        </thead>
+                        <tbody id="drill-list-body" class="divide-y divide-border text-txmain"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-expand" class="fixed inset-0 bg-black/80 backdrop-blur-md hidden z-[105] flex items-center justify-center p-0 md:p-6">
+        <div class="bg-surface border border-border w-full max-w-6xl h-full md:h-[85vh] md:rounded-3xl flex flex-col overflow-hidden shadow-2xl modal-full-mobile transition-colors duration-300">
+            <div class="p-6 md:p-8 border-b border-border flex justify-between items-center bg-panel shrink-0">
+                <h3 id="expand-title" class="text-xl font-bold text-txmain">Análise Detalhada</h3>
+                <button onclick="app.closeModal('modal-expand')" class="w-12 h-12 rounded-full bg-base text-txmuted hover:text-txmain flex items-center justify-center active:bg-border transition-colors"><i class="ph-bold ph-x text-xl"></i></button>
+            </div>
+            <div class="flex-1 overflow-y-auto flex flex-col lg:flex-row">
+                <div class="lg:w-2/3 p-4 md:p-8 border-b lg:border-b-0 lg:border-r border-border relative flex flex-col h-[50vh] lg:h-auto shrink-0 bg-surface">
+                    <div class="flex-1 relative w-full min-h-0"><canvas id="chart-expanded"></canvas></div>
+                    
+                    <div id="drill-down-container" class="hidden absolute inset-0 bg-surface p-6 md:p-8 overflow-y-auto z-10 transition-colors duration-300">
+                        <div class="flex justify-between items-center mb-8">
+                            <h4 id="drill-title" class="text-2xl font-bold text-txmain border-b-2 border-brand-main pb-2">Registros</h4>
+                            <button onclick="app.closeDrillDown()" class="text-sm bg-panel px-4 py-3 rounded-xl text-txmain flex items-center gap-2 hover:bg-border transition-colors">
+                                <i class="ph-bold ph-arrow-left text-lg"></i> Voltar
+                            </button>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm text-left min-w-[500px]">
+                                <thead class="bg-base text-txmuted sticky top-0">
+                                    <tr><th class="p-4 text-txmain">Data</th><th class="p-4 text-txmain">Cliente</th><th class="p-4 text-right text-txmain">Faturamento</th><th class="p-4 text-center text-txmain">Ações</th></tr>
+                                </thead>
+                                <tbody id="drill-table-body" class="divide-y divide-border text-txmain"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="lg:w-1/3 bg-panel overflow-y-auto p-6 md:p-8 flex-1 safe-pb transition-colors duration-300">
+                    <div class="text-sm font-bold text-txmuted uppercase tracking-widest mb-6">Ranking</div>
+                    <table class="w-full text-left text-base">
+                        <tbody id="expand-table-body" class="divide-y divide-border text-txmain"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-ai-deep-dive" class="fixed inset-0 bg-black/90 backdrop-blur-xl hidden z-[108] flex items-center justify-center p-0 md:p-6">
+        <div class="bg-surface border border-border w-full max-w-5xl h-full md:max-h-[90vh] md:rounded-3xl flex flex-col overflow-hidden shadow-2xl modal-full-mobile transition-colors duration-300">
+            <div class="p-6 md:p-8 border-b border-border flex justify-between items-center bg-panel shrink-0">
+                <h3 class="text-xl md:text-3xl font-bold text-txmain flex items-center gap-4">
+                    <div class="bg-brand-main p-2 rounded-xl text-white text-xl"><i class="ph-bold ph-sparkle"></i></div>
+                    Deep Dive
+                </h3>
+                <button onclick="app.closeModal('modal-ai-deep-dive')" class="w-12 h-12 rounded-full bg-base text-txmuted hover:text-txmain flex items-center justify-center active:bg-border transition-colors"><i class="ph-bold ph-x text-xl"></i></button>
+            </div>
+            
+            <div class="flex-1 overflow-y-auto p-6 md:p-10 bg-base scrollbar-thin safe-pb transition-colors duration-300">
+                <!-- Deep dive content... -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+                    <div class="widget-ai p-5 rounded-2xl flex flex-col justify-between h-36 relative overflow-hidden group">
+                        <div class="absolute right-0 top-0 w-20 h-20 bg-emerald-500/10 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"></div>
+                        <div class="text-xs font-bold text-emerald-500 uppercase tracking-wider flex items-center gap-2">
+                            <i class="ph-fill ph-trend-up text-lg"></i> Tendência Mensal
+                        </div>
+                        <div>
+                            <div id="ai-widget-growth-val" class="text-3xl font-bold text-txmain mb-1">...</div>
+                            <div id="ai-widget-growth-desc" class="text-sm text-txmuted">Calculando variação...</div>
+                        </div>
+                    </div>
+                    <div class="widget-ai p-5 rounded-2xl flex flex-col justify-between h-36 relative overflow-hidden group">
+                        <div class="absolute right-0 top-0 w-20 h-20 bg-orange-500/10 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"></div>
+                        <div class="text-xs font-bold text-orange-500 uppercase tracking-wider flex items-center gap-2">
+                            <i class="ph-fill ph-lightning text-lg"></i> Pico de Produção
+                        </div>
+                        <div>
+                            <div id="ai-widget-peak-val" class="text-3xl font-bold text-txmain mb-1">...</div>
+                            <div id="ai-widget-peak-desc" class="text-sm text-txmuted">Identificando melhor dia...</div>
+                        </div>
+                    </div>
+                    <div class="widget-ai p-5 rounded-2xl flex flex-col justify-between h-36 relative overflow-hidden group">
+                        <div class="absolute right-0 top-0 w-20 h-20 bg-brand-main/10 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"></div>
+                        <div class="text-xs font-bold text-brand-main uppercase tracking-wider flex items-center gap-2">
+                            <i class="ph-fill ph-crystal-ball text-lg"></i> Projeção Inteligente
+                        </div>
+                        <div>
+                            <div id="ai-widget-forecast-val" class="text-3xl font-bold text-txmain mb-1">...</div>
+                            <div id="ai-widget-forecast-desc" class="text-sm text-txmuted">Estimativa de fechamento</div>
+                        </div>
+                    </div>
+                    <div class="widget-ai p-5 rounded-2xl flex flex-col justify-between h-36 relative overflow-hidden group">
+                        <div class="absolute right-0 top-0 w-20 h-20 bg-red-500/10 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"></div>
+                        <div class="text-xs font-bold text-red-500 uppercase tracking-wider flex items-center gap-2">
+                            <i class="ph-fill ph-warning-octagon text-lg"></i> Risco de Gargalo
+                        </div>
+                        <div>
+                            <div id="ai-widget-risk-val" class="text-xl md:text-2xl font-bold text-txmain mb-1 leading-tight">...</div>
+                            <div id="ai-widget-risk-desc" class="text-sm text-txmuted">Analisando paradas...</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16">
+                    <div>
+                        <h4 class="text-base font-bold text-txmain uppercase mb-6 flex items-center gap-3"><i class="ph-duotone ph-briefcase text-orange-500 text-xl"></i> Top Clientes</h4>
+                        <div id="ai-top-list" class="space-y-4"></div>
+                    </div>
+                    <div>
+                        <h4 class="text-base font-bold text-txmain uppercase mb-6 flex items-center gap-3"><i class="ph-duotone ph-calendar text-emerald-500 text-xl"></i> Distribuição Semanal</h4>
+                        <div id="ai-week-distribution" class="h-48 md:h-56 relative w-full bg-surface p-5 rounded-2xl border border-border"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- MODAL PROMPT (RENOMEAR) -->
+    <div id="modal-prompt" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden z-[150] flex items-center justify-center p-4">
+        <div class="bg-surface border border-border rounded-2xl shadow-2xl w-full max-w-md overflow-hidden transition-colors duration-300">
+            <div class="p-5 border-b border-border bg-panel">
+                <h3 class="text-base font-bold text-txmain" id="modal-prompt-title">Editar</h3>
+            </div>
+            <div class="p-8">
+                <input type="text" id="modal-prompt-input" class="w-full bg-panel border border-border shadow-inner rounded-xl px-5 py-4 text-txmain text-base outline-none focus:border-brand-main transition-colors">
+            </div>
+            <div class="p-5 bg-panel flex justify-end gap-4 border-t border-border">
+                <button onclick="document.getElementById('modal-prompt').classList.add('hidden')" class="px-5 py-3 text-sm font-bold text-txmuted hover:text-txmain transition-colors">CANCELAR</button>
+                <button onclick="app.executePrompt()" class="px-6 py-3 bg-brand-main text-white text-sm font-bold rounded-xl hover:bg-brand-hover transition-colors">SALVAR</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL CONFIRM -->
+    <div id="modal-confirm" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden z-[150] flex items-center justify-center p-4">
+        <div class="bg-surface border border-border rounded-2xl shadow-2xl w-full max-w-md overflow-hidden transition-colors duration-300">
+            <div class="p-8 text-center">
+                <div class="w-16 h-16 rounded-full bg-red-500/20 text-red-500 flex items-center justify-center mx-auto mb-5"><i class="ph-bold ph-trash text-3xl"></i></div>
+                <h3 class="text-2xl font-bold text-txmain mb-3">Tem certeza?</h3>
+                <p class="text-base text-txmuted">Essa ação não pode ser desfeita.</p>
+            </div>
+            <div class="p-5 bg-panel flex gap-4 border-t border-border">
+                <button onclick="document.getElementById('modal-confirm').classList.add('hidden')" class="flex-1 px-5 py-4 text-sm font-bold text-txmain hover:bg-border bg-base border border-border rounded-xl transition-colors">CANCELAR</button>
+                <button onclick="app.executeConfirm()" class="flex-1 px-5 py-4 bg-red-600 text-white text-sm font-bold rounded-xl hover:bg-red-700 transition-colors">EXCLUIR</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Entrada do Vite (App Modularizado) -->
+</body>
+</html>

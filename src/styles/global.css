@@ -1,4 +1,27 @@
-/* Estilos Gerais e Definição de Variáveis de Tema (Claro / Escuro) */
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Plus Jakarta Sans", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+  
+  --color-base: var(--bg-base);
+  --color-panel: var(--bg-panel);
+  --color-surface: var(--bg-surface);
+  --color-border: var(--border-color);
+  --color-txmain: var(--text-main);
+  --color-txmuted: var(--text-muted);
+  
+  --color-brand-main: var(--brand-main);
+  --color-brand-hover: var(--brand-hover);
+  --color-brand-light: var(--brand-light);
+  
+  --color-status-success: #10b981;
+  --color-status-warning: #f59e0b;
+  --color-status-danger: #ef4444;
+  
+  --shadow-glow: 0 0 15px var(--brand-glow);
+  --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
 
 /* Tema Escuro (Padrão) */
 :root {
@@ -6,13 +29,12 @@
     --bg-panel: #111827;
     --bg-surface: #161e31;
     --border-color: #1f2937;
-    --text-main: #f3f4f6; /* Usado no style inline das listas de settings agora! */
+    --text-main: #f3f4f6;
     --text-muted: #9ca3af;
     
-    /* Identidade PERFURAC (Vermelho) */
-    --brand-main: #dc2626; /* red-600 */
-    --brand-hover: #b91c1c; /* red-700 */
-    --brand-light: #fca5a5; /* red-300 */
+    --brand-main: #dc2626;
+    --brand-hover: #b91c1c;
+    --brand-light: #fca5a5;
     --brand-glow: rgba(220, 38, 38, 0.3);
     
     color-scheme: dark;
@@ -20,14 +42,13 @@
 
 /* Tema Claro */
 .light-theme {
-    --bg-base: #f3f4f6;     /* Cinza bem claro para o fundo principal */
-    --bg-panel: #ffffff;    /* Branco para menus e sidebars */
-    --bg-surface: #ffffff;  /* Branco para os cards e modais */
-    --border-color: #e5e7eb; /* Bordas suaves em cinza claro */
-    --text-main: #111827;   /* O texto agora ficará escuro onde deve, resolvendo o problema! */
-    --text-muted: #4b5563;  
+    --bg-base: #f3f4f6;
+    --bg-panel: #ffffff;
+    --bg-surface: #ffffff;
+    --border-color: #e5e7eb;
+    --text-main: #111827;
+    --text-muted: #4b5563;
     
-    /* Mantém a marca PERFURAC em tons fortes no claro */
     --brand-main: #dc2626; 
     --brand-hover: #b91c1c;
     --brand-light: #ef4444; 
@@ -37,21 +58,18 @@
 }
 
 body { 
-    overscroll-behavior-y: none; /* Previne pull-to-refresh nativo que atrapalha SPA */
+    overscroll-behavior-y: none;
 }
 
-/* Scrollbars dinâmicas conforme tema */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 10px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
 
-/* Inputs nativos de data se adaptam ao color-scheme */
 input[type="date"], input[type="month"] {
     cursor: pointer;
 }
 
-/* Estiliza o ícone do calendário dinamicamente */
 ::-webkit-calendar-picker-indicator {
     opacity: 1;
     cursor: pointer;
@@ -59,7 +77,6 @@ input[type="date"], input[type="month"] {
     padding: 6px;
     border-radius: 6px;
     margin-left: 8px;
-    filter: invert(var(--icon-invert, 0%)); /* Usado se for necessário forçar cor */
 }
 .light-theme ::-webkit-calendar-picker-indicator {
     background-color: var(--border-color);
@@ -68,7 +85,6 @@ input[type="date"], input[type="month"] {
     background-color: var(--brand-glow);
 }
 
-/* Utilitários Mobile */
 .safe-pb { padding-bottom: env(safe-area-inset-bottom); }
 .touch-manipulation { touch-action: manipulation; }
 
@@ -79,7 +95,6 @@ input[type="date"], input[type="month"] {
     box-shadow: 0 0 15px rgba(220, 38, 38, 0.1);
 }
 
-/* Cartões (KPIs) usando as variáveis CSS */
 .kpi-card {
     background: var(--bg-surface);
     border: 1px solid var(--border-color);
@@ -88,7 +103,6 @@ input[type="date"], input[type="month"] {
 }
 .kpi-card:active { transform: scale(0.96); opacity: 0.9; }
 
-/* Tabela de OS: Remove arrows numéricas para inputs */
 .os-table input[type="number"]::-webkit-inner-spin-button,
 .os-table input[type="number"]::-webkit-outer-spin-button {
   -webkit-appearance: none;
@@ -103,7 +117,6 @@ input[type="date"], input[type="month"] {
     white-space: nowrap;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none; 
-    /* Ajustado para funcionar melhor em fundos claros também */
     mask-image: linear-gradient(to right, transparent, black 15px, black 95%, transparent);
     -webkit-mask-image: linear-gradient(to right, transparent, black 15px, black 95%, transparent);
 }
@@ -120,10 +133,9 @@ input[type="date"], input[type="month"] {
         transform: none !important;
         padding-bottom: env(safe-area-inset-bottom);
     }
-    input, select { font-size: 16px !important; } /* Aumentado para melhor leitura no mobile */
+    input, select { font-size: 16px !important; }
 }
 
-/* Animações e IA */
 .ai-thinking {
     background: linear-gradient(-45deg, #dc2626, #ea580c, #dc2626);
     background-size: 200% 200%;
