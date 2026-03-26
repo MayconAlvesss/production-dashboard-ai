@@ -1,0 +1,159 @@
+/* Estilos Gerais e Definição de Variáveis de Tema (Claro / Escuro) */
+
+/* Tema Escuro (Padrão) */
+:root {
+    --bg-base: #0b0f19;
+    --bg-panel: #111827;
+    --bg-surface: #161e31;
+    --border-color: #1f2937;
+    --text-main: #f3f4f6; /* Usado no style inline das listas de settings agora! */
+    --text-muted: #9ca3af;
+    
+    /* Identidade PERFURAC (Vermelho) */
+    --brand-main: #dc2626; /* red-600 */
+    --brand-hover: #b91c1c; /* red-700 */
+    --brand-light: #fca5a5; /* red-300 */
+    --brand-glow: rgba(220, 38, 38, 0.3);
+    
+    color-scheme: dark;
+}
+
+/* Tema Claro */
+.light-theme {
+    --bg-base: #f3f4f6;     /* Cinza bem claro para o fundo principal */
+    --bg-panel: #ffffff;    /* Branco para menus e sidebars */
+    --bg-surface: #ffffff;  /* Branco para os cards e modais */
+    --border-color: #e5e7eb; /* Bordas suaves em cinza claro */
+    --text-main: #111827;   /* O texto agora ficará escuro onde deve, resolvendo o problema! */
+    --text-muted: #4b5563;  
+    
+    /* Mantém a marca PERFURAC em tons fortes no claro */
+    --brand-main: #dc2626; 
+    --brand-hover: #b91c1c;
+    --brand-light: #ef4444; 
+    --brand-glow: rgba(220, 38, 38, 0.15);
+    
+    color-scheme: light;
+}
+
+body { 
+    overscroll-behavior-y: none; /* Previne pull-to-refresh nativo que atrapalha SPA */
+}
+
+/* Scrollbars dinâmicas conforme tema */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+/* Inputs nativos de data se adaptam ao color-scheme */
+input[type="date"], input[type="month"] {
+    cursor: pointer;
+}
+
+/* Estiliza o ícone do calendário dinamicamente */
+::-webkit-calendar-picker-indicator {
+    opacity: 1;
+    cursor: pointer;
+    background-color: var(--bg-surface);
+    padding: 6px;
+    border-radius: 6px;
+    margin-left: 8px;
+    filter: invert(var(--icon-invert, 0%)); /* Usado se for necessário forçar cor */
+}
+.light-theme ::-webkit-calendar-picker-indicator {
+    background-color: var(--border-color);
+}
+::-webkit-calendar-picker-indicator:hover {
+    background-color: var(--brand-glow);
+}
+
+/* Utilitários Mobile */
+.safe-pb { padding-bottom: env(safe-area-inset-bottom); }
+.touch-manipulation { touch-action: manipulation; }
+
+.nav-item.active {
+    background: linear-gradient(135deg, rgba(220, 38, 38, 0.15), rgba(220, 38, 38, 0.05));
+    border: 1px solid rgba(220, 38, 38, 0.3);
+    color: var(--brand-main);
+    box-shadow: 0 0 15px rgba(220, 38, 38, 0.1);
+}
+
+/* Cartões (KPIs) usando as variáveis CSS */
+.kpi-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    transition: transform 0.1s, background-color 0.3s, border-color 0.3s;
+}
+.kpi-card:active { transform: scale(0.96); opacity: 0.9; }
+
+/* Tabela de OS: Remove arrows numéricas para inputs */
+.os-table input[type="number"]::-webkit-inner-spin-button,
+.os-table input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.os-table input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+.mobile-scroll-x {
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; 
+    /* Ajustado para funcionar melhor em fundos claros também */
+    mask-image: linear-gradient(to right, transparent, black 15px, black 95%, transparent);
+    -webkit-mask-image: linear-gradient(to right, transparent, black 15px, black 95%, transparent);
+}
+.mobile-scroll-x::-webkit-scrollbar { display: none; }
+
+@media (max-width: 768px) {
+    .modal-full-mobile {
+        width: 100% !important;
+        height: 100% !important;
+        max-height: 100% !important;
+        border-radius: 0 !important;
+        top: 0 !important;
+        left: 0 !important;
+        transform: none !important;
+        padding-bottom: env(safe-area-inset-bottom);
+    }
+    input, select { font-size: 16px !important; } /* Aumentado para melhor leitura no mobile */
+}
+
+/* Animações e IA */
+.ai-thinking {
+    background: linear-gradient(-45deg, #dc2626, #ea580c, #dc2626);
+    background-size: 200% 200%;
+    animation: gradient 2s ease infinite;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+@keyframes gradient { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+
+.chat-bubble { max-width: 90%; padding: 14px 18px; border-radius: 16px; font-size: 1rem; line-height: 1.5; margin-bottom: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+.chat-user { background: var(--brand-main); color: white; align-self: flex-end; border-bottom-right-radius: 4px; }
+.chat-ai { background: var(--bg-surface); color: var(--text-main); align-self: flex-start; border-bottom-left-radius: 4px; border: 1px solid var(--border-color); }
+
+.ai-content p { margin-bottom: 0.8em; }
+.ai-content strong { color: var(--brand-main); font-weight: 700; }
+.ai-content ul { list-style-type: disc; padding-left: 1.2em; margin-bottom: 0.8em; }
+
+.typing-dot { width: 8px; height: 8px; background: var(--text-muted); border-radius: 50%; animation: bounce 1.4s infinite ease-in-out both; }
+.typing-dot:nth-child(1) { animation-delay: -0.32s; }
+.typing-dot:nth-child(2) { animation-delay: -0.16s; }
+@keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
+
+.widget-ai {
+    background: var(--bg-panel);
+    border: 1px solid var(--border-color);
+    transition: all 0.2s;
+}
+.widget-ai:hover {
+    border-color: var(--brand-main);
+    box-shadow: 0 4px 12px var(--brand-glow);
+}
+
+canvas { cursor: pointer; }
